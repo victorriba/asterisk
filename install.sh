@@ -136,6 +136,12 @@ echo '[general]
 rtpstart=8000
 rtpend=20000' > /etc/asterisk/rtp.conf
 
+echo'[general]
+
+[logfiles]
+console => notice,warning,error
+messages => notice,warning,error,security' > /etc/asterisk/logger.conf
+
 mkdir /etc/asterisk/keys
 
 echo '[INCLUDES]
