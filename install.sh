@@ -159,7 +159,24 @@ echo '[common]
 [config]
 uri=mongodb://mongodb:27017/asterisk' > /etc/asterisk/ast_mongo.conf
 
+echo '[general]
+rtpstart=8000
+rtpend=20000' > /etc/asterisk/rtp.conf
+
 mkdir /etc/asterisk/keys
+
+nano /etc/fail2ban/jail.conf
+
+[asterisk]
+enabled = true
+port     = 5060,5061
+action   = %(banaction)s[name=%(__name__)s-tcp, port="%(port)s", protocol="tcp", chain="%(chain)s", actname=%(banaction)s-tcp]
+           %(banaction)s[name=%(__name__)s-udp, port="%(port)s", protocol="udp", chain="%(chain)s", actname=%(banaction)s-udp]
+           %(mta)s-whois[name=%(__name__)s, dest="%(destemail)s"]
+logpath  = /var/log/asterisk/messages
+maxretry = 10
+
+fail2ban-client reload
 
 
 
