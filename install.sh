@@ -38,18 +38,33 @@ patch -p1 -i ast_mongo-16.0.0.patch
 contrib/scripts/install_prereq install
 ./bootstrap.sh
 ./configure --with-jansson-bundled
-make menuselect
+#make menuselect
+make menuselect.makeopts
+menuselect/menuselect --enable format_mp3  menuselect.makeopts
+menuselect/menuselect --enable codec_opus  menuselect.makeopts
+menuselect/menuselect --enable codec_silk  menuselect.makeopts
+menuselect/menuselect --enable codec_siren7  menuselect.makeopts
+menuselect/menuselect --enable codec_siren14  menuselect.makeopts
+menuselect/menuselect --disable cdr_custom menuselect.makeopts
+menuselect/menuselect --disable cdr_mongodb menuselect.makeopts
+menuselect/menuselect --disable cdr_odbc menuselect.makeopts
+menuselect/menuselect --disable cdr_pgsql menuselect.makeopts
+menuselect/menuselect --disable cdr_radius menuselect.makeopts
+menuselect/menuselect --disable cdr_sqlite3_custom menuselect.makeopts
+menuselect/menuselect --disable cel_mongodb menuselect.makeopts
+menuselect/menuselect --disable cel_pgsql menuselect.makeopts
+menuselect/menuselect --disable cel_radius menuselect.makeopts
+menuselect/menuselect --disable cel_sqlite3_custom menuselect.makeopts
+
 contrib/scripts/get_mp3_source.sh
 make
 make install
 make config
 make samples
 ldconfig
-systemctl enable asterisk
-service asterisk enable
+
 service asterisk start
-asterisk -r
-ls
+
 echo '' > /etc/asterisk/sip.conf 
 nano /etc/asterisk/pjsip.conf 
 apt isntall nano
