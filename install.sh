@@ -22,6 +22,7 @@ iptables -I INPUT -j DROP -p udp --dport 5060 -m string --string "sipvicious" --
 iptables -I INPUT -j DROP -p udp --dport 5060 -m string --string "iWar" --algo bm
 iptables -A INPUT -j DROP -p udp --dport 5060 -m string --string "sipcli/" --algo bm
 iptables -A INPUT -j DROP -p udp --dport 5060 -m string --string "VaxSIPUserAgent/" --algo bm
+/sbin/iptables-save
 cd /usr/src
 wget -nv "https://github.com/mongodb/mongo-c-driver/releases/download/1.13.0/mongo-c-driver-1.13.0.tar.gz" -O - | tar xzf -
 cd mongo-c-driver-1.13.0
