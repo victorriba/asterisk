@@ -145,6 +145,7 @@ exten => _X.,1,Stasis(bot)' > /etc/asterisk/extensions.conf
 echo '[general]
 enabled = yes
 pretty = yes
+allowed_origins = localhost:8088,http://apiserver.com
 
 [asterisk]
 type = user
