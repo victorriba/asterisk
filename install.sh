@@ -79,6 +79,29 @@ chmod 755 /usr/lib/asterisk/modules/codec_g723.so
 chmod 755 /usr/lib/asterisk/modules/codec_g729.so
 service asterisk restart
 
+echo '' > /etc/asterisk/sip.conf
+
+echo '[transport-tcp]
+type=transport
+protocol=tcp
+bind=0.0.0.0
+
+[transport-udp]
+type=transport
+protocol=udp
+bind=0.0.0.0
+
+[transport-wss]
+type=transport
+protocol=wss
+bind=0.0.0.0
+
+[transport-ws]
+type=transport
+protocol=ws
+bind=0.0.0.0' > /etc/asterisk/pjsip.conf
+
+
 echo '[general]
 enabled=yes
 bindaddr=0.0.0.0
@@ -87,6 +110,7 @@ tlsenable=yes
 tlsbindaddr=0.0.0.0:8089
 tlscertfile=/etc/asterisk/keys/asterisk.crt
 tlsprivatekey=/etc/asterisk/keys/asterisk.key' > /etc/asterisk/http.conf
+
 
 echo '[res_pjsip]
 endpoint=realtime,ps_endpoints  ; map endpoint to ps_endpoints source
