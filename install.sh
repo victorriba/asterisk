@@ -57,3 +57,4 @@ cp -rf codec_g729-ast160-gcc4-glibc-x86_64-core2.so /usr/lib/asterisk/modules/co
 chmod 755 /usr/lib/asterisk/modules/codec_g723.so
 chmod 755 /usr/lib/asterisk/modules/codec_g729.so
 service asterisk restart
+nano ~/.bashrc
