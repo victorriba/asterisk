@@ -1,5 +1,5 @@
 apt update
-apt install -y libssl-dev libsasl2-dev libncurses5-dev libnewt-dev libxml2-dev libsqlite3-dev libjansson-dev libcurl4-openssl-dev libedit-dev pkg-config build-essential cmake autoconf uuid-dev wget file git sudo nano iptables fail2ban
+apt install -y libssl-dev libsasl2-dev libncurses5-dev libnewt-dev libxml2-dev libsqlite3-dev libjansson-dev libcurl4-openssl-dev libedit-dev pkg-config build-essential cmake autoconf uuid-dev wget file git sudo nano iptables fail2ban certbot
 iptables -L -v
 iptables -F
 iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
@@ -152,6 +152,16 @@ read_only = no
 password = astsystempassword' > /etc/asterisk/ari.conf
 
 
+echo '[modules]
+autoload=yes
+noload => chan_alsa.so
+noload => chan_console.so
+noload => chan_sip.so
+noload => res_hep.so
+noload => res_hep_pjsip.so
+noload => res_hep_rtcp.so' > /etc/asterisk/modules.conf
+
+
 echo '[common]
 [config]
 uri=mongodb://mongodb:27017/asterisk' > /etc/asterisk/ast_mongo.conf
@@ -222,8 +232,4 @@ nano ~/.bashrc
 service asterisk start
 rm /var/run/fail2ban/fail2ban.sock
 service fail2ban start
-
-
-
-
 
