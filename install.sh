@@ -86,15 +86,6 @@ bindport=8088
 tlsenable=yes
 tlsbindaddr=0.0.0.0:8089
 tlscertfile=/etc/asterisk/keys/asterisk.crt
-tlsprivatekey=/etc/asterisk/keys/asterisk.key
-root@docker-desktop:/# cat /etc/asterisk/http.conf
-[general]
-enabled=yes
-bindaddr=0.0.0.0
-bindport=8088
-tlsenable=yes
-tlsbindaddr=0.0.0.0:8089
-tlscertfile=/etc/asterisk/keys/asterisk.crt
 tlsprivatekey=/etc/asterisk/keys/asterisk.key' > /etc/asterisk/http.conf
 
 echo '[res_pjsip]
