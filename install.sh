@@ -65,23 +65,6 @@ ldconfig
 
 service asterisk start
 
-echo '' > /etc/asterisk/sip.conf 
-nano /etc/asterisk/pjsip.conf 
-apt isntall nano
-apt install nano
-nano /etc/asterisk/pjsip.conf 
-echo ''> /etc/asterisk/pjsip.conf
-nano /etc/asterisk/pjsip.conf 
-nano /etc/asterisk/extconfig.conf 
-nano /etc/asterisk/sorcery.conf 
-nano /etc/asterisk/ast_mongo.conf
-asterisk -r 
-echo ''> /etc/asterisk/extensions.conf 
-nano /etc/asterisk/extensions.conf 
-nano /etc/asterisk/http.conf 
-nano /etc/asterisk/ari.conf 
-mkdir /etc/asterisk/keys
-asterisk -r
 cd /usr/src
 wget -nv "http://downloads.digium.com/pub/telephony/codec_opus/asterisk-16.0/x86-64/codec_opus-16.0_current-x86_64.tar.gz" -O - | tar -zxf -
 cd codec_opus-16.0_1.3.0-x86_64/
@@ -95,7 +78,6 @@ cp -rf codec_g729-ast160-gcc4-glibc-x86_64-core2.so /usr/lib/asterisk/modules/co
 chmod 755 /usr/lib/asterisk/modules/codec_g723.so
 chmod 755 /usr/lib/asterisk/modules/codec_g729.so
 service asterisk restart
-nano ~/.bashrc
 
 echo '[general]
 enabled=yes
@@ -177,6 +159,10 @@ logpath  = /var/log/asterisk/messages
 maxretry = 10
 
 fail2ban-client reload
+
+service asterisk start
+
+nano ~/.bashrc
 
 
 
