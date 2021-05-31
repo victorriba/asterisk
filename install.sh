@@ -138,22 +138,62 @@ rtpend=20000' > /etc/asterisk/rtp.conf
 
 mkdir /etc/asterisk/keys
 
-nano /etc/fail2ban/jail.conf
+echo '[INCLUDES]
+
+before = paths-debian.conf
+
+[DEFAULT]
+ignorecommand =
+bantime  = 10m
+findtime  = 10m
+maxretry = 5
+maxmatches = %(maxretry)s
+backend = systemd
+usedns = warn
+logencoding = auto
+enabled = false
+mode = normal
+filter = %(__name__)s[mode=%(mode)s]
+destemail = root@localhost
+sender = root@<fq-hostname>
+mta = sendmail
+protocol = tcp
+chain = <known/chain>
+port = 0:65535
+fail2ban_agent = Fail2Ban/%(fail2ban_version)s
+banaction = iptables-multiport
+banaction_allports = iptables-allports
+action_ = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+action_mw = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+            %(mta)s-whois[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", protocol="%(protocol)s", chain="%(chain)s"]
+action_mwl = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+             %(mta)s-whois-lines[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", logpath="%(logpath)s", chain="%(chain)s"]
+action_xarf = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+             xarf-login-attack[service=%(__name__)s, sender="%(sender)s", logpath="%(logpath)s", port="%(port)s"]
+action_cf_mwl = cloudflare[cfuser="%(cfemail)s", cftoken="%(cfapikey)s"]
+                %(mta)s-whois-lines[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", logpath="%(logpath)s", chain="%(chain)s"]
+action_blocklist_de  = blocklist_de[email="%(sender)s", service=%(filter)s, apikey="%(blocklist_de_apikey)s", agent="%(fail2ban_agent)s"]
+action_badips = badips.py[category="%(__name__)s", banaction="%(banaction)s", agent="%(fail2ban_agent)s"]
+action_badips_report = badips[category="%(__name__)s", agent="%(fail2ban_agent)s"]
+action_abuseipdb = abuseipdb
+action = %(action_)s
 
 [asterisk]
-enabled = true
+enabled  = true
 port     = 5060,5061
 action   = %(banaction)s[name=%(__name__)s-tcp, port="%(port)s", protocol="tcp", chain="%(chain)s", actname=%(banaction)s-tcp]
            %(banaction)s[name=%(__name__)s-udp, port="%(port)s", protocol="udp", chain="%(chain)s", actname=%(banaction)s-udp]
            %(mta)s-whois[name=%(__name__)s, dest="%(destemail)s"]
 logpath  = /var/log/asterisk/messages
-maxretry = 10
+maxretry = 10' > /etc/fail2ban/jail.conf
 
-fail2ban-client reload
-
-service asterisk start
 
 nano ~/.bashrc
+service asterisk start
+rm /var/run/fail2ban/fail2ban.sock
+service fail2ban start
+
+
 
 
 
