@@ -171,7 +171,7 @@ echo '[general]
 rtpstart=8000
 rtpend=20000' > /etc/asterisk/rtp.conf
 
-echo'[general]
+echo '[general]
 
 [logfiles]
 console => notice,warning,error
