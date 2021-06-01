@@ -228,6 +228,15 @@ action   = %(banaction)s[name=%(__name__)s-tcp, port="%(port)s", protocol="tcp",
 logpath  = /var/log/asterisk/messages
 maxretry = 10' > /etc/fail2ban/jail.conf
 
+certbot certonly --standalone -d sip.domain.com
+
+cp /etc/letsencrypt/live/sip.domain.com/privkey.pem /etc/asterisk/keys/asterisk.key
+cp /etc/letsencrypt/live/sip.domain.com/fullchain.pem /etc/asterisk/keys/asterisk.cert
+
+chmod 777 /etc/asterisk/keys/asterisk.cert 
+chmod 777 /etc/asterisk/keys/asterisk.key 
+
+service asterisk restart
 
 nano ~/.bashrc
 service asterisk start
