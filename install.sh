@@ -178,7 +178,6 @@ dateformat = %F %T
 console => notice,warning,error
 messages => notice,warning,error,security' > /etc/asterisk/logger.conf
 
-mkdir /etc/asterisk/keys
 
 echo '[INCLUDES]
 
@@ -251,6 +250,8 @@ failregex = NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .
             NOTICE.* .*: <HOST> tried  to authenticate with nonexistent user '.*'
             VERBOSE.*SIP/<HOST>-.*Received incoming SIP connection from unknown peer
 ignoreregex =" > /etc/fail2ban/filter.d/asterisk.conf
+
+mkdir /etc/asterisk/keys
 
 certbot certonly --standalone -d sip.domain.com
 
