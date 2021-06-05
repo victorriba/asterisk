@@ -222,11 +222,13 @@ action = %(action_)s
 [asterisk]
 enabled  = true
 port     = 5060,5061
+bantime = 600
+findtime = 3600
 action   = %(banaction)s[name=%(__name__)s-tcp, port="%(port)s", protocol="tcp", chain="%(chain)s", actname=%(banaction)s-tcp]
            %(banaction)s[name=%(__name__)s-udp, port="%(port)s", protocol="udp", chain="%(chain)s", actname=%(banaction)s-udp]
            %(mta)s-whois[name=%(__name__)s, dest="%(destemail)s"]
 logpath  = /var/log/asterisk/messages
-maxretry = 10' > /etc/fail2ban/jail.conf
+maxretry = 5' > /etc/fail2ban/jail.conf
 
 certbot certonly --standalone -d sip.domain.com
 
