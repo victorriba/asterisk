@@ -1,5 +1,5 @@
 apt update
-apt install -y libssl-dev libsasl2-dev libncurses5-dev libnewt-dev libxml2-dev libsqlite3-dev libjansson-dev libcurl4-openssl-dev libedit-dev pkg-config build-essential cmake autoconf uuid-dev wget file git sudo nano iptables fail2ban certbot
+apt install -y libssl-dev libsasl2-dev libncurses5-dev libnewt-dev libxml2-dev libsqlite3-dev libjansson-dev libcurl4-openssl-dev libedit-dev pkg-config build-essential cmake autoconf uuid-dev wget file git sudo nano iptables certbot
 iptables -L -v
 iptables -F
 iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
@@ -38,23 +38,7 @@ patch -p1 -i ast_mongo-16.0.0.patch
 contrib/scripts/install_prereq install
 ./bootstrap.sh
 ./configure --with-jansson-bundled
-#make menuselect
-make menuselect.makeopts
-menuselect/menuselect --enable format_mp3  menuselect.makeopts
-menuselect/menuselect --enable codec_opus  menuselect.makeopts
-menuselect/menuselect --enable codec_silk  menuselect.makeopts
-menuselect/menuselect --enable codec_siren7  menuselect.makeopts
-menuselect/menuselect --enable codec_siren14  menuselect.makeopts
-menuselect/menuselect --disable cdr_custom menuselect.makeopts
-menuselect/menuselect --disable cdr_mongodb menuselect.makeopts
-menuselect/menuselect --disable cdr_odbc menuselect.makeopts
-menuselect/menuselect --disable cdr_pgsql menuselect.makeopts
-menuselect/menuselect --disable cdr_radius menuselect.makeopts
-menuselect/menuselect --disable cdr_sqlite3_custom menuselect.makeopts
-menuselect/menuselect --disable cel_mongodb menuselect.makeopts
-menuselect/menuselect --disable cel_pgsql menuselect.makeopts
-menuselect/menuselect --disable cel_radius menuselect.makeopts
-menuselect/menuselect --disable cel_sqlite3_custom menuselect.makeopts
+make menuselect
 
 contrib/scripts/get_mp3_source.sh
 make
@@ -178,79 +162,14 @@ dateformat = %F %T
 console => notice,warning,error
 messages => notice,warning,error,security' > /etc/asterisk/logger.conf
 
+cd /usr/src
+git clone https://github.com/fail2ban/fail2ban.git
+cd fail2ban
+sudo python setup.py install
 
-echo '[INCLUDES]
-
-before = paths-debian.conf
-
-[DEFAULT]
-ignorecommand =
-bantime  = 10m
-findtime  = 10m
-maxretry = 5
-maxmatches = %(maxretry)s
-backend = systemd
-usedns = warn
-logencoding = auto
-enabled = false
-mode = normal
-filter = %(__name__)s[mode=%(mode)s]
-destemail = root@localhost
-sender = root@<fq-hostname>
-mta = sendmail
-protocol = tcp
-chain = <known/chain>
-port = 0:65535
-fail2ban_agent = Fail2Ban/%(fail2ban_version)s
-banaction = iptables-multiport
-banaction_allports = iptables-allports
-action_ = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
-action_mw = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
-            %(mta)s-whois[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", protocol="%(protocol)s", chain="%(chain)s"]
-action_mwl = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
-             %(mta)s-whois-lines[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", logpath="%(logpath)s", chain="%(chain)s"]
-action_xarf = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
-             xarf-login-attack[service=%(__name__)s, sender="%(sender)s", logpath="%(logpath)s", port="%(port)s"]
-action_cf_mwl = cloudflare[cfuser="%(cfemail)s", cftoken="%(cfapikey)s"]
-                %(mta)s-whois-lines[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", logpath="%(logpath)s", chain="%(chain)s"]
-action_blocklist_de  = blocklist_de[email="%(sender)s", service=%(filter)s, apikey="%(blocklist_de_apikey)s", agent="%(fail2ban_agent)s"]
-action_badips = badips.py[category="%(__name__)s", banaction="%(banaction)s", agent="%(fail2ban_agent)s"]
-action_badips_report = badips[category="%(__name__)s", agent="%(fail2ban_agent)s"]
-action_abuseipdb = abuseipdb
-action = %(action_)s
-
-[asterisk]
-enabled  = true
-bantime = 600
-findtime = 3600
-action   = iptables-allports[name=ASTERISK, protocol=all]
-logpath  = /var/log/asterisk/messages
-maxretry = 5' > /etc/fail2ban/jail.conf
-
-echo "# Fail2Ban configuration file
-[INCLUDES]
-#before = common.conf
-[Definition]
-failregex = NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Wrong password
-	    NOTICE.* .*: Request \'INVITE\' from '.*' failed for '<HOST>:.*' .* - No matching endpoint found
-	    NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching endpoint found
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching peer found
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching peer found
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Username/auth name mismatch
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Device does not match ACL
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Peer is not supposed to register
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - ACL error (permit/deny)
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Device does not match ACL
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching peer found
-            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Wrong password
-            NOTICE.* <HOST> failed to authenticate as '.*'$
-            NOTICE.* .*: No registration for peer '.*' \(from <HOST>\)
-            NOTICE.* .*: Host <HOST> failed MD5 authentication for '.*' (.*)
-            NOTICE.* .*: Failed to authenticate user .*@<HOST>.*
-            NOTICE.* .*: <HOST> failed to authenticate as '.*'
-            NOTICE.* .*: <HOST> tried  to authenticate with nonexistent user '.*'
-            VERBOSE.*SIP/<HOST>-.*Received incoming SIP connection from unknown peer
-ignoreregex =" > /etc/fail2ban/filter.d/asterisk.conf
+cp files/debian-initd /etc/init.d/fail2ban
+update-rc.d fail2ban defaults
+service fail2ban start
 
 mkdir /etc/asterisk/keys
 
