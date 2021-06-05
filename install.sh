@@ -172,6 +172,7 @@ rtpstart=8000
 rtpend=20000' > /etc/asterisk/rtp.conf
 
 echo '[general]
+dateformat = %F %T
 
 [logfiles]
 console => notice,warning,error
@@ -221,13 +222,35 @@ action = %(action_)s
 
 [asterisk]
 enabled  = true
-port     = 5060,5061
 bantime = 600
 findtime = 3600
-action   = %(banaction)s[name=%(__name__)s-tcp, port="%(port)s", protocol="tcp", chain="%(chain)s", actname=%(banaction)s-tcp]
-           %(banaction)s[name=%(__name__)s-udp, port="%(port)s", protocol="udp", chain="%(chain)s", actname=%(banaction)s-udp]
+action   = iptables-allports[name=ASTERISK, protocol=all]
 logpath  = /var/log/asterisk/messages
 maxretry = 5' > /etc/fail2ban/jail.conf
+
+echo "# Fail2Ban configuration file
+[INCLUDES]
+#before = common.conf
+[Definition]
+failregex = NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Wrong password
+			NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching endpoint found
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching peer found
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching peer found
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Username/auth name mismatch
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Device does not match ACL
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Peer is not supposed to register
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - ACL error (permit/deny)
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Device does not match ACL
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching peer found
+            NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Wrong password
+            NOTICE.* <HOST> failed to authenticate as '.*'$
+            NOTICE.* .*: No registration for peer '.*' \(from <HOST>\)
+            NOTICE.* .*: Host <HOST> failed MD5 authentication for '.*' (.*)
+            NOTICE.* .*: Failed to authenticate user .*@<HOST>.*
+            NOTICE.* .*: <HOST> failed to authenticate as '.*'
+            NOTICE.* .*: <HOST> tried  to authenticate with nonexistent user '.*'
+            VERBOSE.*SIP/<HOST>-.*Received incoming SIP connection from unknown peer
+ignoreregex =" > /etc/fail2ban/filter.d/asterisk.conf
 
 certbot certonly --standalone -d sip.domain.com
 
