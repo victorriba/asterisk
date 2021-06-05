@@ -232,7 +232,8 @@ echo "# Fail2Ban configuration file
 #before = common.conf
 [Definition]
 failregex = NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Wrong password
-			NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching endpoint found
+	    NOTICE.* .*: Request \'INVITE\' from '.*' failed for '<HOST>:.*' .* - No matching endpoint found
+	    NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching endpoint found
             NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching peer found
             NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - No matching peer found
             NOTICE.* .*: Request \'REGISTER\' from '.*' failed for '<HOST>:.*' .* - Username/auth name mismatch
